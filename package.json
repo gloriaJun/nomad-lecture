@@ -4,7 +4,7 @@
   "description": "monorepo template",
   "author": "gloriaJun <pureainu@gmail.com>",
   "scripts": {
-    "prepare": "husky install",
+    "prepare": "husky || true",
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
