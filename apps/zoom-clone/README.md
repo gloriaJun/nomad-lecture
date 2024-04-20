@@ -66,17 +66,4 @@ typescript로 작성을 하다보니, 클라이언트에서 해석할 수 있도
 
 ### Lecture
 
-#### Chat With WebSockets
-
-##### Http vs WebSockets
-
-- http
-  - **stateless**
-  - backend와 사용자 사이에 아무런 연결이 없으므로 backend는 사용자를 기억하지 못한다.
-    - 요청에 대해 처리하고 잊어버린다. 단지, server는 요청에 대해 응답하고 끝!!
-  - real-time으로 응답과 요청이 발생하지 않는다.
-- websocket
-  - **bi-directional connection**
-  - 브라우저로부터 connection이 발생하면 handshake를 하는 것과 같이 동작한다.
-  - connection이 되어있으므로 서버는 사용자가 누구인지 기억하고, 원할 때 언제든 사용자에게 메시지를 보낼 수 있다.
-  - real-time으로 연결이 끊길 때까지 연결되어있다.
+- [Chat With WebSocket](./websocket.md)

@@ -1,5 +1,4 @@
 import express from 'express';
-import http from 'http';
 import WebSocket from 'ws';
 import path from 'path';
 
@@ -21,13 +20,33 @@ app.get('/*', (req, res) => {
   res.redirect('/');
 });
 
-const server = http.createServer(app);
+const server = app.listen(PORT, () => {
+  console.log(`\n🚀 Listening on 'http://localhost:${PORT}'`);
+});
+
+/**
+ * create a WebSocket server
+ */
 const ws = new WebSocket.Server({ server });
 
 ws.on('connection', (socket) => {
-  console.log('Client connected', socket);
-});
+  const sendMessageToClient = (message: string) => {
+    ws.clients.forEach((client) => {
+      if (client !== socket && client.readyState === WebSocket.OPEN) {
+        client.send(message);
+      }
+    });
+  };
 
-app.listen(PORT, () => {
-  console.log(`\n🚀 Listening on 'http://localhost:${PORT}'`);
+  console.log('🤗 Client connected');
+  sendMessageToClient('👋 Hello! from new connected client');
+
+  socket.on('message', (message) => {
+    sendMessageToClient(message.toString('utf-8'));
+  });
+
+  socket.on('close', () => {
+    console.log('😢 Client Disconnected!!');
+    sendMessageToClient('😢 Bye! one client is disconnected!!');
+  });
 });
