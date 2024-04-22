@@ -1,6 +1,6 @@
 import webpack from 'webpack';
 import { CleanWebpackPlugin } from 'clean-webpack-plugin';
-import { outputDir, resolve } from './webpack.util';
+import { configDefault, outputDir, resolve } from './webpack.util';
 
 const config: webpack.Configuration = {
   mode: 'development',
@@ -10,17 +10,8 @@ const config: webpack.Configuration = {
     filename: 'public/js/index.bundle.js',
     publicPath: 'public',
   },
-  resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.jsx'],
-  },
-  module: {
-    rules: [
-      {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
-      },
-    ],
-  },
+  resolve: configDefault.resolve,
+  module: { ...configDefault.module },
   plugins: [
     new webpack.HotModuleReplacementPlugin(),
     new CleanWebpackPlugin({

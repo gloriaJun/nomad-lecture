@@ -2,7 +2,7 @@ import type webpack from 'webpack';
 import nodeExternals from 'webpack-node-externals';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import { CleanWebpackPlugin } from 'clean-webpack-plugin';
-import { outputDir, resolve } from './webpack.util';
+import { configDefault, outputDir, resolve } from './webpack.util';
 
 const config: webpack.Configuration = {
   target: 'node',
@@ -15,17 +15,8 @@ const config: webpack.Configuration = {
     path: outputDir,
     filename: '[name].js',
   },
-  resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.jsx'],
-  },
-  module: {
-    rules: [
-      {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
-      },
-    ],
-  },
+  resolve: configDefault.resolve,
+  module: { ...configDefault.module },
   plugins: [
     new CopyWebpackPlugin({
       patterns: [{ from: resolve('src/views'), to: 'views' }],
