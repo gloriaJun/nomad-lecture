@@ -1,29 +1,71 @@
+import { isErrored } from 'stream';
+import { MessageData, MessageTypes } from '~/@types';
+
 const messageList = document.querySelector('ul');
-const messageForm = document.querySelector('form');
+const messageForm = document.getElementById('message');
+const nicknameForm = document.getElementById('nickname');
 
 const socket = new WebSocket(`ws://${window.location.host}`);
-console.log('This is a TypeScript client script', socket);
+
+const appendMessage = (data: string, isSender: boolean) => {
+  const { type, nickname, payload: message } = JSON.parse(data) as MessageData;
+  const li = document.createElement('li');
+
+  if (type === 'join' || type === 'leave') {
+    const span = document.createElement('li');
+
+    span.style.color = '#808080';
+    span.style.fontStyle = 'italic';
+
+    span.innerText = [nickname, message].filter(Boolean).join(': ');
+
+    li!.append(span);
+  } else {
+    li.innerText = [nickname, isSender ? '📝' : '📨', ': ', message]
+      .filter(Boolean)
+      .join('');
+  }
+  messageList!.append(li);
+};
+
+const handleSubmitEvent = (event: SubmitEvent) => {
+  event.preventDefault();
+
+  const element = event.target as HTMLElement;
+
+  const input = element.querySelector('input');
+  const { value } = input ?? {};
+
+  if (value) {
+    const type = element.id as MessageTypes;
+    const data = {
+      type,
+      payload: value,
+    } satisfies MessageData;
+    const message = JSON.stringify(data);
+
+    socket.send(message);
+
+    if (type !== 'nickname') {
+      appendMessage(message, true);
+    }
+  }
+
+  input!.value = '';
+};
 
 socket.addEventListener('open', () => {
   console.log('🤗 Connect to server');
 });
 
-socket.addEventListener('message', (message) => {
-  console.log('📨 Message received from server:', message.data);
+socket.addEventListener('message', (message: MessageEvent<string>) => {
+  appendMessage(message.data, false);
 });
 
 socket.addEventListener('close', () => {
   console.log('😢 Disconnected from server');
 });
 
-messageForm?.addEventListener('submit', (event) => {
-  event.preventDefault();
+nicknameForm?.addEventListener('submit', handleSubmitEvent);
 
-  const messageInput = document.querySelector('input');
-
-  if (messageInput?.value) {
-    socket.send(messageInput?.value);
-  }
-
-  messageInput!.value = '';
-});
+messageForm?.addEventListener('submit', handleSubmitEvent);

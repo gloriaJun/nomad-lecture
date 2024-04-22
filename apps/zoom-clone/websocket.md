@@ -33,20 +33,17 @@ const ws = new WebSocket.Server({ server });
 
 ws.on('connection', (socket) => {
   console.log('🤗 Client connected');
-  socket.send('👋 Hello!');
 
   socket.on('close', () => {
     console.log('😢 Disconnected from Browser');
   });
 
   socket.on('message', (message) => {
-    console.log('📨 Message received from client:', message.toString('utf-8'));
-
-    // ws.clients.forEach((client) => {
-    //   if (client !== socket && client.readyState === WebSocket.OPEN) {
-    //     client.send(message);
-    //   }
-    // });
+    ws.clients.forEach((client) => {
+      if (client !== socket && client.readyState === WebSocket.OPEN) {
+        client.send(message.toString('utf-8'));
+      }
+    });
   });
 });
 ```
@@ -70,3 +67,11 @@ socket.addEventListener('close', () => {
   console.log('😢 Disconnected from server');
 });
 ```
+
+### WebSocket 단점
+
+별도의 라이브러리를 사용하지 않는 경우에 대한 단점.
+
+- nickname, message 등에 대한 주고받는 메시지 타입 구분이 어렵다.
+  - 구분을 하려면 조건문 처리를 하며 타입을 구분해줘야한다.
+  - 타입 스크립트랑 같이 사용할 때 타입 처리가 유연하지 않다.

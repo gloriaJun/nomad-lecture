@@ -10,7 +10,11 @@ html(lang="en")
 		header
 			h1 Zoom
 		main
-			form
+			form#nickname
+				input(type="text", placeholder="Enter your nickname", required)
+				button(type="submit") Save
+			ul
+			form#message
 				input(type="text", placeholder="Enter your message", required)
 				button(type="submit") Send
 

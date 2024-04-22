@@ -1,6 +1,7 @@
 import express from 'express';
 import WebSocket from 'ws';
 import path from 'path';
+import { MessageData } from '~/@types';
 
 const resolve = (file: string) => path.join(process.cwd(), 'dist', file);
 
@@ -30,23 +31,49 @@ const server = app.listen(PORT, () => {
 const ws = new WebSocket.Server({ server });
 
 ws.on('connection', (socket) => {
-  const sendMessageToClient = (message: string) => {
+  const sendMessageToClient = (message: MessageData) => {
     ws.clients.forEach((client) => {
       if (client !== socket && client.readyState === WebSocket.OPEN) {
-        client.send(message);
+        client.send(
+          JSON.stringify({
+            ...message,
+            // @ts-ignore
+            nickname: socket.nickname,
+          }),
+        );
       }
     });
   };
 
   console.log('🤗 Client connected');
-  sendMessageToClient('👋 Hello! from new connected client');
+  sendMessageToClient({
+    type: 'join',
+    payload: '👋 Hello! from new connected client',
+  });
 
   socket.on('message', (message) => {
-    sendMessageToClient(message.toString('utf-8'));
+    const { type, payload } = JSON.parse(
+      message.toString('utf-8'),
+    ) as MessageData;
+
+    switch (type) {
+      case 'nickname':
+        // @ts-ignore
+        socket[type] = payload;
+        break;
+      default:
+        sendMessageToClient({
+          type: 'message',
+          payload,
+        });
+    }
   });
 
   socket.on('close', () => {
     console.log('😢 Client Disconnected!!');
-    sendMessageToClient('😢 Bye! one client is disconnected!!');
+    sendMessageToClient({
+      type: 'leave',
+      payload: '😢 Bye! one client is disconnected!!',
+    });
   });
 });
