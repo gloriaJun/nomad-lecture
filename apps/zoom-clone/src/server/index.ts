@@ -1,7 +1,9 @@
+import http from 'node:http';
+import path from 'node:path';
+
 import express from 'express';
-import WebSocket from 'ws';
-import path from 'path';
-import { MessageData } from '~/@types';
+
+import { createSocket } from './socket';
 
 const resolve = (file: string) => path.join(process.cwd(), 'dist', file);
 
@@ -21,59 +23,9 @@ app.get('/*', (req, res) => {
   res.redirect('/');
 });
 
-const server = app.listen(PORT, () => {
+const server = http.createServer(app);
+createSocket(server);
+
+app.listen(PORT, () => {
   console.log(`\n🚀 Listening on 'http://localhost:${PORT}'`);
-});
-
-/**
- * create a WebSocket server
- */
-const ws = new WebSocket.Server({ server });
-
-ws.on('connection', (socket) => {
-  const sendMessageToClient = (message: MessageData) => {
-    ws.clients.forEach((client) => {
-      if (client !== socket && client.readyState === WebSocket.OPEN) {
-        client.send(
-          JSON.stringify({
-            ...message,
-            // @ts-ignore
-            nickname: socket.nickname,
-          }),
-        );
-      }
-    });
-  };
-
-  console.log('🤗 Client connected');
-  sendMessageToClient({
-    type: 'join',
-    payload: '👋 Hello! from new connected client',
-  });
-
-  socket.on('message', (message) => {
-    const { type, payload } = JSON.parse(
-      message.toString('utf-8'),
-    ) as MessageData;
-
-    switch (type) {
-      case 'nickname':
-        // @ts-ignore
-        socket[type] = payload;
-        break;
-      default:
-        sendMessageToClient({
-          type: 'message',
-          payload,
-        });
-    }
-  });
-
-  socket.on('close', () => {
-    console.log('😢 Client Disconnected!!');
-    sendMessageToClient({
-      type: 'leave',
-      payload: '😢 Bye! one client is disconnected!!',
-    });
-  });
 });
