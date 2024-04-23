@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "files": [
-    "library.js",
+    "base.js",
     "next.js",
-    "react-internal.js"
+    "react-base.js"
   ],
   "devDependencies": {
     "@vercel/style-guide": "^5.2.0",
