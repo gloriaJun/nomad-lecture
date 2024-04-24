@@ -1,4 +1,4 @@
-import webpackServerConfig from './webpack.server.config';
-import webpackClientConfig from './webpack.client.config';
+import webpackClientConfig from './webpack.client';
+import webpackServerConfig from './webpack.server';
 
 export default [webpackServerConfig, webpackClientConfig];

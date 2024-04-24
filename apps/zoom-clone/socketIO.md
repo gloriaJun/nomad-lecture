@@ -10,13 +10,55 @@
 
 ### Usage
 
+- custom Event를 정의하여 사용할 수 있다.
+- server가 종료되면 client는 재연결을 일정 간격으로 시도한다.
+- client가 원하는 형태로 어떤 메시지로든 server로 전달할 수 있다.
+  - string, json, function (해당 함수를 서버가 특정 시점에 클라이언트로 전달하고, 클라이언트에서 실행된다.)
+    - 원하는 만큼 argument를 정의하여 사용할 수 있다.
+  - function은 메시지에 대한 처리가 끝난 뒤에 실행하는 형태로 반드시 제일 마지막 argument로 전달되어야한다.
+    - (예를 들어) server에서 client의 메시지를 전달받은 뒤에 시간이 오래 걸리는 등과 같은 작업을 하고, 해당 작업이 완료되었음을 client에 전달하고 싶은 경우에 사용할 수 있다.
+    - 클라이언트에서 전달된 함수를 서버에서 실행 할 때 보안의 이슈가 생길 가능성도 있음.
+    - 서버에서 해당 함수에 argument를 담아 함수를 호출할 수도 있다.
+-
+
 #### server
 
 - ref doc: https://socket.io/docs/v4/server-installation/
 
+```typescript
+const io = new socketIo.Server(server);
+
+io.on('connection', (socket) => {
+  console.log('🤗 Client connected', socket);
+
+  socket.on('join-room', (message, callback: () => void) => {
+    //   io.emit('message', message);
+    console.log('join-room', message);
+    // 👇 This function will run on client not server-side
+    callback();
+  });
+
+  socket.on('message', (message) => {
+    io.emit('message', message);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('😢 Client Disconnected!!');
+  });
+});
+```
+
 #### client
 
 - ref doc: https://socket.io/docs/v4/client-installation/
+
+```typescript
+// ['event-name', 'message-data'(json object), 'function']
+// - function will call anytime on server-side and it execute on frontend side
+socket.emit('join-room', { payload: inputEl.value }, () => {
+  console.log('server is done!');
+});
+```
 
 #### Standalone build
 

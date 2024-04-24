@@ -2,7 +2,7 @@ import { Server } from 'http';
 
 import WebSocket from 'ws';
 
-import { WebSocketMessageData } from '~/@types';
+import { WebSocketMessageData } from '~/common/@types';
 
 export function createWebSocket(server: Server) {
   /**

@@ -1,5 +1,5 @@
 // websocket client example
-import { WebSocketMessageData, MessageTypes } from '~/@types';
+import { WebSocketMessageData, MessageTypes } from '~/common/@types';
 
 const messageList = document.querySelector('ul');
 const messageForm = document.getElementById('message');

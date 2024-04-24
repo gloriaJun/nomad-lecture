@@ -7,4 +7,5 @@ module.exports = {
     project: true,
     tsconfigRootDir: __dirname,
   },
+  ignorePatterns: ['node_modules/', 'dist/', 'build/'],
 };

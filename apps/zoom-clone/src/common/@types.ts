@@ -4,3 +4,7 @@ export interface WebSocketMessageData {
   nickname?: string;
   payload: string;
 }
+
+export interface SocketIoMessageData {
+  payload: string;
+}

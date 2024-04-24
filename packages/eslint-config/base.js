@@ -61,10 +61,10 @@ module.exports = {
             pattern: '{@/**}',
             group: 'internal',
           },
-          // {
-          //   pattern: '{@markup/**}',
-          //   group: 'unknown',
-          // },
+          {
+            pattern: '{~/**}',
+            group: 'internal',
+          },
         ],
         pathGroupsExcludedImportTypes: ['react'],
         'newlines-between': 'always',

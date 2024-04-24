@@ -3,7 +3,7 @@ import path from 'node:path';
 
 import express from 'express';
 
-import { createSocket } from './socket';
+import { createSocket } from '~/server/socket';
 
 const resolve = (file: string) => path.join(process.cwd(), 'dist', file);
 
